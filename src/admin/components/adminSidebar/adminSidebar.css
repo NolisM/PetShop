@@ -1,0 +1,64 @@
+.sidebar {
+  flex: 1;
+  height: calc(100vh - 50px);
+  background-color: rgb(220, 241, 220);
+  position: sticky;
+  top: 50px;
+}
+
+.sidebarWrapper {
+  padding: 20px;
+  color: #555;
+}
+
+.sidebarMenu {
+  margin-bottom: 10px;
+}
+
+.sidebarTitle {
+  font-size: 20px;
+  color: #575757;
+  font-family: 'Poppins';
+  font-style: normal;
+}
+
+.sidebarList {
+  list-style: none;
+  padding: 5px;
+  font-family: 'Poppins';
+    font-style: normal;
+}
+
+.sidebarListItem {
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-family: 'Poppins';
+  font-style: normal;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #575757;
+  text-decoration:none;
+}
+
+.sidebarListItem.active,
+.sidebarListItem:hover {
+  background-color: rgb(192, 216, 200);
+  font-size: 18px;
+  color: #067A4D;
+  text-decoration:none;
+}
+
+.sidebarIcon{
+    margin-right: 5px;
+    font-size: 20px !important;
+}
+
+
+.link{
+  text-decoration: none;
+  font-family: "Poppins";
+  font-style: normal;
+  color: inherit;
+}

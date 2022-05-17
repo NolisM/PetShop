@@ -1,0 +1,132 @@
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import Product from "../product/Product";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import {
+  getProductsCategories,
+  getAnimalCategories,
+} from "../../redux/actions";
+import Pagination from "../../components/pagination/Pagination";
+import { Analytics } from "../wrappers/analytics/Analytics";
+
+const Container = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  padding-right: 10em;
+  justify-content: center;
+  ${(props) =>
+    props.products.length > 8
+      ? `
+            margin-bottom: 1%;
+        `
+      : props.products.length < 8 && props.products.length > 4
+      ? `
+            margin-bottom: 15%;
+            `
+      : `
+            margin-bottom: 40%;
+        `}
+`;
+
+const Error = styled.h1`
+  margin-top: 5%;
+  margin-bottom: 20%;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.5em;
+  line-height: 22px;
+`;
+
+const CatSleeping = styled.img`
+  position: absolute;
+  top: 72px;
+  left: 12%;
+  height: 280px;
+  width: 300px;
+`;
+
+const Products = ({
+  viewMode,
+  currentProducts,
+  productsPerPage,
+  paged,
+  currentPage,
+}) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const allProducts = useSelector((state) => state.clientReducer.products);
+  const visitId = useSelector((state) => state.clientReducer.visitId);
+  const user = useSelector((state) => state.clientReducer.user);
+  const settings = useSelector((state) => state.clientReducer.settings);
+
+  useEffect(() => {
+    dispatch(getProductsCategories());
+    dispatch(getAnimalCategories());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const navigateToProduct = (e) => {
+    if (viewMode === "Grid") navigate(`/product/${e.currentTarget.id}`);
+  };
+
+  return (
+    <Container products={allProducts}>
+      {currentProducts?.length && !allProducts[0].msg ? (
+        // eslint-disable-next-line array-callback-return
+        currentProducts.map((e) => {
+          if (!e.delete && e.data.stock >= 1) {
+            // Si queremos que se muestre lo eliminado, cambiar este condicional
+            return (
+              <Analytics
+                user={user}
+                visitId={visitId}
+                type="card"
+                productId={e.uid}
+                avaliable={settings.useProductsHoverAnalytics ? true : false}
+              >
+                <div
+                  key={e.uid}
+                  id={e.uid}
+                  onClick={(e) => navigateToProduct(e)}
+                >
+                  <Product
+                    title={e.data.name}
+                    imagen={e.data.image || "https://i.imgur.com/f1I4xIg.jpg"}
+                    info={e.data.info}
+                    price={e.data.price}
+                    animalCategory={e.data.animalCategory}
+                    category={e.data.category}
+                    subCategory={e.data.subCategory}
+                    stock={e.data.stock}
+                    viewMode={viewMode}
+                    id={e.uid}
+                  />
+                </div>
+              </Analytics>
+            );
+          }
+        })
+      ) : (
+        <div style={{ position: "relative" }}>
+          <Error>Lo siento, no hemos encontrado nada.</Error>
+          <CatSleeping
+            src="https://i.imgur.com/sds8SCl.gif"
+            alt="sin datos para mostrar"
+          />
+        </div>
+      )}
+      <Pagination
+        productsPerPage={productsPerPage}
+        products={allProducts.length}
+        paged={paged}
+        currentPage={currentPage}
+      />
+    </Container>
+  );
+};
+
+export default Products;
